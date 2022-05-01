@@ -5,5 +5,5 @@ data class Question(
     val id: String,
     val question: String,
     val questionChoices: List<String>,
-    val answer:Int
+    var answer:Int
 )
