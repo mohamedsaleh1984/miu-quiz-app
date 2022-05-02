@@ -6,16 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
-import com.miu.quizapp.data.Question
-import kotlin.math.log
+import com.miu.quizapp.database.Question
+import com.miu.quizapp.database.QuestionDatabase
+import kotlinx.coroutines.launch
 
-class QuestionFragment : Fragment() {
+class QuestionFragment : BaseFragment() {
     private lateinit var radioGroup: RadioGroup
     private var selectedAnswer: Int = -1;
-    private var question = Question (1,1,"Whats best programming language for system internals?", listOf("C++","Assembly","Java"),0);
+    private var question = Question (1,1,"Whats best programming language for system internals?", "C++|Assembly|Java",0);
     private var questionId: Int = 1;
+    private lateinit var QuestionList:List<Question>;
     private lateinit var tvQuestion: TextView
     private lateinit var rdBtn1: RadioButton
     private lateinit var rdBtn2: RadioButton
@@ -39,6 +40,17 @@ class QuestionFragment : Fragment() {
 
         btnNext = view.findViewById(R.id.btnNext);
         btnSkip = view.findViewById(R.id.btnSkip);
+
+        // Retrieve all Questions from database
+        launch {
+            context?.let{
+                QuestionList = QuestionDatabase(it).getDocumentDao().getAllQuestions();
+                Toast.makeText(it,QuestionList.count(),Toast.LENGTH_LONG).show()
+            }
+        }
+
+
+
 
         renderQuestion(question)
 
@@ -81,7 +93,7 @@ class QuestionFragment : Fragment() {
             Navigation.findNavController(view).navigate(R.id.resultFragment);
         } else {
             //render next question
-            var q = Question (0,1,"sssss", listOf("Step1","Step2","Step3"),0);
+            var q = Question (0,1,"sssss", "Step1|Step2|Step3",0);
             renderQuestion(q)
             //renderQuestion(questList[questionId])
         }
@@ -89,8 +101,9 @@ class QuestionFragment : Fragment() {
 
     private fun renderQuestion(Q: Question) {
         tvQuestion.setText(Q.question);
-        rdBtn1.setText(Q.questionChoices[0]);
-        rdBtn2.setText(Q.questionChoices[1]);
-        rdBtn3.setText(Q.questionChoices[2]);
+        val Choices = Q.questionChoices.split(" ");
+        rdBtn1.setText(Choices[0]);
+        rdBtn2.setText(Choices[1]);
+        rdBtn3.setText(Choices[2]);
     }
 }
