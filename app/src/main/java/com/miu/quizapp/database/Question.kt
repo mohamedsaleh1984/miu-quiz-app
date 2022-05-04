@@ -6,12 +6,12 @@ import org.jetbrains.annotations.NotNull
 
 //Entity Class
 @Entity(tableName = "question_table")
-class Question(
-    @PrimaryKey
-    @NotNull
-    val id: Int,
-    val correctAnswer: Int,
+data class Question(
     val question: String,
     val questionChoices:String,
-    val answer:Int
+    val correctAnswer: Int,
+    var answer:Int
 )
+{
+    @PrimaryKey(autoGenerate = true) var QId:Int? = null
+}

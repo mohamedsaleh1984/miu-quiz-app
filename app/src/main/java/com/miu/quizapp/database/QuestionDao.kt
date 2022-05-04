@@ -1,35 +1,26 @@
 package com.miu.quizapp.database
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
-import org.jetbrains.annotations.NotNull
+import androidx.lifecycle.LiveData
+import androidx.room.*
 
 //Data Access Object
 @Dao
 interface QuestionDao {
-    @Insert
-    suspend fun addQuestion(Q: Question)
     @Update
-    suspend fun resetQuestionsAnswers(QuestionList: List<Question>)
-//    @Query("SELECT * FROM Question")
-//    suspend fun getAllQuestions(): List<Question>
-//    @Insert
-   // suspend fun addMultipleQuestions(vararg  QuestionList:Question)
+    fun UpdateQuestion(Q:Question)
 
+    @Query("Update question_table Set answer = -1")
+    fun ResetAllQuestionsAnswers()
+
+    @Query("SELECT * FROM question_table")
+    fun GetAllQuestions(): List<Question>
+
+    @Insert
+    fun InsertQuestion(vararg question:Question)
+
+    @Query("Select Count(*) From question_table")
+    fun RowsCount():Int
+
+    @Query("Delete From question_table")
+    fun DeleteAll()
 }
-
-/*  @Query("SELECT * FROM Question")
-  suspend fun getAllQuestions(): List<Question>
-/@Insert
- suspend fun addMultipleQuestions(vararg  QuestionList:Question)
-/   @Update
- @NotNull
- suspend fun resetQuestionsAnswers(QuestionList: List<Question>)
-
- @Update
- @NotNull
- suspend fun updateQuestionAnswer(Q: Question)
-
-} */

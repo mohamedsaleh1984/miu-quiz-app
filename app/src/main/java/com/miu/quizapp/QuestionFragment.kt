@@ -6,17 +6,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
+import androidx.room.Room
 import com.miu.quizapp.database.Question
 import com.miu.quizapp.database.QuestionDatabase
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class QuestionFragment : BaseFragment() {
     private lateinit var radioGroup: RadioGroup
+
     private var selectedAnswer: Int = -1;
-    private var question = Question (1,1,"Whats best programming language for system internals?", "C++|Assembly|Java",0);
-    private var questionId: Int = 1;
-    private lateinit var QuestionList:List<Question>;
+    private var questionIndex: Int = 0;
+
     private lateinit var tvQuestion: TextView
     private lateinit var rdBtn1: RadioButton
     private lateinit var rdBtn2: RadioButton
@@ -25,10 +28,14 @@ class QuestionFragment : BaseFragment() {
     private lateinit var btnNext: Button
     private lateinit var btnSkip: Button
 
+    lateinit var  db:QuestionDatabase;
+    lateinit var qlist:List<Question>;
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         val view: View = inflater.inflate(R.layout.fragment_question, container, false)
 
         tvQuestion = view.findViewById(R.id.tvQuestion);
@@ -41,20 +48,21 @@ class QuestionFragment : BaseFragment() {
         btnNext = view.findViewById(R.id.btnNext);
         btnSkip = view.findViewById(R.id.btnSkip);
 
-        // Retrieve all Questions from database
-        launch {
-            context?.let{
-                QuestionList = QuestionDatabase(it).getDocumentDao().getAllQuestions();
-                Toast.makeText(it,QuestionList.count(),Toast.LENGTH_LONG).show()
-            }
+        db = Room.databaseBuilder(requireContext(), QuestionDatabase::class.java,"question-db").build();
+        GlobalScope.launch {
+            qlist = db.questionDao().GetAllQuestions();
+            FetchQuestion(questionIndex);
+            Log.i("TEST","Loaded...")
         }
 
-
-
-
-        renderQuestion(question)
-
+       // renderQuestion(question)
         return view;
+    }
+
+    private  suspend fun FetchQuestion(index:Int){
+        Log.i("TEST","FetchQuestion...")
+        var q =  qlist[index]
+        RenderQuestion(q)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -66,44 +74,58 @@ class QuestionFragment : BaseFragment() {
         radioGroup.clearCheck();
         radioGroup.setOnCheckedChangeListener { group, checkedId ->
             val radioButton: RadioButton = group.findViewById<View>(checkedId) as RadioButton
-            when (radioButton.id)
-            {
+            when (radioButton.id) {
                 R.id.radia_id1 -> selectedAnswer = 0
                 R.id.radia_id2 -> selectedAnswer = 1
                 R.id.radia_id3 -> selectedAnswer = 2
                 else -> selectedAnswer = -1
             }
+            Toast.makeText(requireContext(),selectedAnswer.toString(),Toast.LENGTH_LONG).show();
+            Log.i("TEST","Question Answer Updated...")
+            UpdateQuestionAnswer(questionIndex,selectedAnswer);
         }
     }
 
-    private fun onNextClick(view:View) {
+    private fun onNextClick(view: View) {
         MoveToNextQuestion(view);
     }
 
-    private fun onSkipClick(view:View) {
+    private fun onSkipClick(view: View) {
         radioGroup.clearCheck();
         MoveToNextQuestion(view);
     }
 
-    private fun MoveToNextQuestion(view:View){
-        ++questionId;
-        if (questionId == 2) {
+    private fun MoveToNextQuestion(view: View) {
+        radioGroup.clearCheck();
+        ++questionIndex;
+        if (questionIndex == 3) {
             //move to result fragment
-            Log.i("TEST","Move to next fragment...");
+            Log.i("TEST", "Move to next fragment...");
             Navigation.findNavController(view).navigate(R.id.resultFragment);
         } else {
             //render next question
-            var q = Question (0,1,"sssss", "Step1|Step2|Step3",0);
-            renderQuestion(q)
-            //renderQuestion(questList[questionId])
+            var q =  qlist[questionIndex]
+            RenderQuestion(q)
         }
     }
 
-    private fun renderQuestion(Q: Question) {
+    private fun RenderQuestion(Q: Question) {
         tvQuestion.setText(Q.question);
-        val Choices = Q.questionChoices.split(" ");
+
+        val Choices = Q.questionChoices.split("|");
         rdBtn1.setText(Choices[0]);
         rdBtn2.setText(Choices[1]);
         rdBtn3.setText(Choices[2]);
+
+        Log.i("TEST","${Q.QId} ${Q.question} ${Q.questionChoices} ")
     }
+
+    private fun UpdateQuestionAnswer(qIndex:Int,userSelection:Int){
+        GlobalScope.launch {
+            var selectedQuestion = qlist[qIndex];
+            selectedQuestion.answer = userSelection;
+            db.questionDao().UpdateQuestion(selectedQuestion);
+        }
+    }
+
 }
