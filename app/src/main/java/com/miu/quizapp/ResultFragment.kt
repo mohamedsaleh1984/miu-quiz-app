@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 class ResultFragment : Fragment() {
     lateinit var  db:QuestionDatabase;
     lateinit var qlist:List<Question>;
+    var count:Int = 0;
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -24,6 +25,7 @@ class ResultFragment : Fragment() {
 
         db = Room.databaseBuilder(requireContext(), QuestionDatabase::class.java,"question-db").build();
         GlobalScope.launch {
+            count = db.questionDao().RowsCount();
             qlist = db.questionDao().GetAllQuestions();
             GetResult(qlist);
         }
@@ -40,13 +42,13 @@ class ResultFragment : Fragment() {
             if(q.answer == q.correctAnswer){
                 correctAnswer++;
             }
-            if(q.answer == q.correctAnswer && q.answer != -1){
+            else if(q.answer != q.correctAnswer && q.answer != -1){
                 wrongAnswer++;
 
                 var chekList = q.questionChoices.split("|");
                 correction+="Question ${qIndex}: Your selection is: ${chekList[q.answer]}, correct answer is :${chekList[q.correctAnswer]}\n"
             }
-            if(q.answer == -1){
+            else if(q.answer == -1){
                 skippedAnswer++;
             }
 
@@ -54,8 +56,8 @@ class ResultFragment : Fragment() {
         }
 
         tvCorrectAnswers.text = "Total correct answers is: ${correctAnswer}"
-        tvScore.text = "${correctAnswer}/3"
-        tvSubmittedAnswers.text = "${correctAnswer+wrongAnswer}/3";
+        tvScore.text = "Your score is ${correctAnswer}/${count}"
+        tvSubmittedAnswers.text = "Total submitted answers ${correctAnswer+wrongAnswer}/${count}";
         tvWrongAnswers.text ="Total wrong answers is: ${wrongAnswer}"
         tvCorrection.text = correction
     }

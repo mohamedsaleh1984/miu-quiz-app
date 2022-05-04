@@ -54,15 +54,13 @@ class QuestionFragment : BaseFragment() {
             FetchQuestion(questionIndex);
             Log.i("TEST","Loaded...")
         }
-
-       // renderQuestion(question)
         return view;
     }
 
     private  suspend fun FetchQuestion(index:Int){
         Log.i("TEST","FetchQuestion...")
         var q =  qlist[index]
-        RenderQuestion(q)
+        renderQuestion(q)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -72,31 +70,32 @@ class QuestionFragment : BaseFragment() {
         btnSkip.setOnClickListener({ onSkipClick(view) });
 
         radioGroup.clearCheck();
-        radioGroup.setOnCheckedChangeListener { group, checkedId ->
-            val radioButton: RadioButton = group.findViewById<View>(checkedId) as RadioButton
-            when (radioButton.id) {
+        radioGroup.setOnCheckedChangeListener { buttonView, isChecked ->
+           // Toast.makeText(requireContext(),isChecked.toString(),Toast.LENGTH_SHORT).show()
+            when (isChecked) {
                 R.id.radia_id1 -> selectedAnswer = 0
                 R.id.radia_id2 -> selectedAnswer = 1
                 R.id.radia_id3 -> selectedAnswer = 2
                 else -> selectedAnswer = -1
             }
-            Toast.makeText(requireContext(),selectedAnswer.toString(),Toast.LENGTH_LONG).show();
-            Log.i("TEST","Question Answer Updated...")
-            UpdateQuestionAnswer(questionIndex,selectedAnswer);
+           // Toast.makeText(requireContext(),selectedAnswer.toString(),Toast.LENGTH_LONG).show();
+           // Log.i("TEST","Question Answer Updated...")
+            updateQuestionAnswer(questionIndex,selectedAnswer);
         }
     }
 
     private fun onNextClick(view: View) {
-        MoveToNextQuestion(view);
+        radioGroup.clearCheck();
+        moveToNextQuestion(view);
     }
 
     private fun onSkipClick(view: View) {
         radioGroup.clearCheck();
-        MoveToNextQuestion(view);
+        moveToNextQuestion(view);
     }
 
-    private fun MoveToNextQuestion(view: View) {
-        radioGroup.clearCheck();
+    private fun moveToNextQuestion(view: View) {
+        //radioGroup.clearCheck();
         ++questionIndex;
         if (questionIndex == 3) {
             //move to result fragment
@@ -105,11 +104,11 @@ class QuestionFragment : BaseFragment() {
         } else {
             //render next question
             var q =  qlist[questionIndex]
-            RenderQuestion(q)
+            renderQuestion(q)
         }
     }
 
-    private fun RenderQuestion(Q: Question) {
+    private fun renderQuestion(Q: Question) {
         tvQuestion.setText(Q.question);
 
         val Choices = Q.questionChoices.split("|");
@@ -120,12 +119,11 @@ class QuestionFragment : BaseFragment() {
         Log.i("TEST","${Q.QId} ${Q.question} ${Q.questionChoices} ")
     }
 
-    private fun UpdateQuestionAnswer(qIndex:Int,userSelection:Int){
+    private fun updateQuestionAnswer(qIndex:Int,userSelection:Int){
         GlobalScope.launch {
             var selectedQuestion = qlist[qIndex];
             selectedQuestion.answer = userSelection;
             db.questionDao().UpdateQuestion(selectedQuestion);
         }
     }
-
 }
