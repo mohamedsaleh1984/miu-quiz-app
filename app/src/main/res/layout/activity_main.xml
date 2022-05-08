@@ -9,38 +9,48 @@
 
     <ImageView
         android:id="@+id/imageView"
-
-        android:layout_width="151dp"
-        android:layout_height="92dp"
+        android:layout_width="372dp"
+        android:layout_height="288dp"
         android:layout_gravity="center"
         android:layout_marginTop="30dp"
         android:contentDescription="@string/quizapp"
         android:scaleType="fitCenter"
         android:src="@drawable/quizapp"
-        />
+        tools:ignore="ImageContrastCheck" />
 
-    <Button
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/btnStart"
-        android:text="Start"
-        android:layout_marginTop="250dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:onClick="onStartClick"
-        android:background="@color/blue"
-        android:textColor="#FFFFFF"
-     />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/btnExit"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
         android:layout_marginTop="10dp"
-        android:text="Exit"
-        android:onClick="onExitClick"
+        android:alpha="0.3"
+        android:rotation="-21"
+        android:rotationY="8"
+        android:text="Test Your Kotlin Knowledge"
+        android:textAlignment="center"
+        android:textColor="#039BE5"
+        android:textSize="36dp" />
+
+    <Button
+        android:id="@+id/btnStart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="30dp"
         android:background="@color/blue"
-        android:textColor="#FFFFFF"/>
+        android:onClick="onStartClick"
+        android:text="Start"
+        android:textColor="#311B92" />
+
+    <Button
+        android:id="@+id/btnExit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="30dp"
+        android:background="@color/blue"
+        android:onClick="onExitClick"
+        android:text="Exit"
+        android:textColor="#311B92" />
 </LinearLayout>
