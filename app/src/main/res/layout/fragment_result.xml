@@ -10,25 +10,30 @@
         android:id="@+id/tvSubmittedAnswers"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="16dp"
         android:layout_margin="10dp" />
     <TextView
         android:id="@+id/tvCorrectAnswers"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="16dp"
         android:layout_margin="10dp" />
     <TextView
         android:id="@+id/tvWrongAnswers"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="16dp"
         android:layout_margin="10dp" />
     <TextView
         android:id="@+id/tvScore"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="16dp"
         android:layout_margin="10dp" />
     <TextView
         android:id="@+id/tvCorrection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="16dp"
         android:layout_margin="10dp" />
 </LinearLayout>

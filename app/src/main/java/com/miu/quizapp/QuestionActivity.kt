@@ -16,4 +16,8 @@ class QuestionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_question)
     }
+
+    override fun onBackPressed() {
+        finish()
+    }
 }

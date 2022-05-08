@@ -1,6 +1,7 @@
 package com.miu.quizapp
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +13,7 @@ import kotlinx.android.synthetic.main.fragment_result.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class ResultFragment : Fragment() {
+class ResultFragment : BaseFragment() {
     lateinit var  db:QuestionDatabase;
     lateinit var qlist:List<Question>;
     var count:Int = 0;
@@ -53,6 +54,9 @@ class ResultFragment : Fragment() {
             }
 
             qIndex++;
+
+
+            Log.i("TEST","Question ${qIndex}: Your selection is: ${q.answer}, correct answer is :${q.correctAnswer}\n")
         }
 
         tvCorrectAnswers.text = "Total correct answers is: ${correctAnswer}"

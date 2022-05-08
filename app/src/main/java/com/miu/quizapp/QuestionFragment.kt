@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.room.Room
 import com.miu.quizapp.database.Question
@@ -14,11 +13,13 @@ import com.miu.quizapp.database.QuestionDatabase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+
 class QuestionFragment : BaseFragment() {
     private lateinit var radioGroup: RadioGroup
 
     private var selectedAnswer: Int = -1;
     private var questionIndex: Int = 0;
+    private var numOfQuestions:Int = 0;
 
     private lateinit var tvQuestion: TextView
     private lateinit var rdBtn1: RadioButton
@@ -51,14 +52,13 @@ class QuestionFragment : BaseFragment() {
         db = Room.databaseBuilder(requireContext(), QuestionDatabase::class.java,"question-db").build();
         GlobalScope.launch {
             qlist = db.questionDao().GetAllQuestions();
+            numOfQuestions = qlist.size;
             FetchQuestion(questionIndex);
-            Log.i("TEST","Loaded...")
         }
         return view;
     }
 
     private  suspend fun FetchQuestion(index:Int){
-        Log.i("TEST","FetchQuestion...")
         var q =  qlist[index]
         renderQuestion(q)
     }
@@ -69,23 +69,21 @@ class QuestionFragment : BaseFragment() {
         btnNext.setOnClickListener({ onNextClick(view) });
         btnSkip.setOnClickListener({ onSkipClick(view) });
 
-        radioGroup.clearCheck();
+
         radioGroup.setOnCheckedChangeListener { buttonView, isChecked ->
-           // Toast.makeText(requireContext(),isChecked.toString(),Toast.LENGTH_SHORT).show()
+            // Toast.makeText(requireContext(),isChecked.toString(),Toast.LENGTH_SHORT).show()
             when (isChecked) {
                 R.id.radia_id1 -> selectedAnswer = 0
                 R.id.radia_id2 -> selectedAnswer = 1
                 R.id.radia_id3 -> selectedAnswer = 2
                 else -> selectedAnswer = -1
             }
-           // Toast.makeText(requireContext(),selectedAnswer.toString(),Toast.LENGTH_LONG).show();
-           // Log.i("TEST","Question Answer Updated...")
-            updateQuestionAnswer(questionIndex,selectedAnswer);
+           updateQuestionAnswer(questionIndex,selectedAnswer);
         }
     }
 
+
     private fun onNextClick(view: View) {
-        radioGroup.clearCheck();
         moveToNextQuestion(view);
     }
 
@@ -95,14 +93,14 @@ class QuestionFragment : BaseFragment() {
     }
 
     private fun moveToNextQuestion(view: View) {
-        //radioGroup.clearCheck();
         ++questionIndex;
-        if (questionIndex == 3) {
+        //  questionIndex == numOfQuestions-1
+        if (questionIndex == 15) {
             //move to result fragment
-            Log.i("TEST", "Move to next fragment...");
             Navigation.findNavController(view).navigate(R.id.resultFragment);
         } else {
             //render next question
+            radioGroup.clearCheck();
             var q =  qlist[questionIndex]
             renderQuestion(q)
         }
@@ -111,19 +109,25 @@ class QuestionFragment : BaseFragment() {
     private fun renderQuestion(Q: Question) {
         tvQuestion.setText(Q.question);
 
-        val Choices = Q.questionChoices.split("|");
-        rdBtn1.setText(Choices[0]);
-        rdBtn2.setText(Choices[1]);
-        rdBtn3.setText(Choices[2]);
-
-        Log.i("TEST","${Q.QId} ${Q.question} ${Q.questionChoices} ")
+        val choices = Q.questionChoices.split("|");
+        rdBtn1.setText(choices[0]);
+        rdBtn2.setText(choices[1]);
+        rdBtn3.setText(choices[2]);
     }
 
-    private fun updateQuestionAnswer(qIndex:Int,userSelection:Int){
+    private  fun updateQuestionAnswer(qIndex:Int,userSelection:Int){
         GlobalScope.launch {
             var selectedQuestion = qlist[qIndex];
             selectedQuestion.answer = userSelection;
+
+            print(selectedQuestion)
             db.questionDao().UpdateQuestion(selectedQuestion);
+            print(selectedQuestion)
+
         }
+    }
+
+    private fun print(q:Question){
+        Log.i("TEST","Question ${q.question}: Your selection is: ${q.answer}, correct answer is :${q.correctAnswer}\n")
     }
 }
