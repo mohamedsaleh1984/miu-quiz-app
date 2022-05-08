@@ -19,5 +19,17 @@
         android:name="com.miu.quizapp.ResultFragment"
         android:label="fragment_result"
         tools:layout="@layout/fragment_result" >
+        <action
+            android:id="@+id/action_resultFragment_to_correctionFragment"
+            app:destination="@id/correctionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/correctionFragment"
+        android:name="com.miu.quizapp.CorrectionFragment"
+        android:label="fragment_correction"
+        tools:layout="@layout/fragment_correction" >
+        <argument
+            android:name="answers"
+            app:argType="string" />
     </fragment>
 </navigation>

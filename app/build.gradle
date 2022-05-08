@@ -66,6 +66,4 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
     //Material Design
     implementation 'com.google.android.material:material:1.1.0'
-
-
 }
