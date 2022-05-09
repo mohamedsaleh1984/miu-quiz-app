@@ -67,6 +67,7 @@ class ResultFragment : Fragment() {
             tvScore.setText(Html.fromHtml("<b>Your score is : ${correctAnswer}/${count}</b>"));
             tvSubmittedAnswers.setText(Html.fromHtml("<b>Total submitted answers is : ${correctAnswer+wrongAnswer}/${count}</b>"))
             tvWrongAnswers.setText(Html.fromHtml("<b>Total wrong answers is : ${wrongAnswer}</b>"))
+            tvSkipped.setText(Html.fromHtml("<b>Total skipped answers is : ${skippedAnswer}</b>"))
         }
         return  view;
     }

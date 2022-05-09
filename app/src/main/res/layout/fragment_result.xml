@@ -39,7 +39,15 @@
         android:layout_margin="10dp"
         android:text="dummy text"
         android:textSize="20dp" />
-
+    <TextView
+        android:id="@+id/tvSkipped"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:maxLines="10"
+        android:scrollbars="vertical"
+        android:text=""
+        android:textSize="20dp" />
     <TextView
         android:id="@+id/tvCorrection"
         android:layout_width="match_parent"
