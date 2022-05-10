@@ -71,7 +71,6 @@ class QuestionFragment : BaseFragment() {
 
 
         radioGroup.setOnCheckedChangeListener { buttonView, isChecked ->
-            // Toast.makeText(requireContext(),isChecked.toString(),Toast.LENGTH_SHORT).show()
             when (isChecked) {
                 R.id.radia_id1 -> selectedAnswer = 0
                 R.id.radia_id2 -> selectedAnswer = 1
@@ -81,7 +80,6 @@ class QuestionFragment : BaseFragment() {
            updateQuestionAnswer(questionIndex,selectedAnswer);
         }
     }
-
 
     private fun onNextClick(view: View) {
         moveToNextQuestion(view);

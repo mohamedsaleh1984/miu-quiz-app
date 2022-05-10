@@ -22,8 +22,8 @@ class CorrectionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var r = arguments;
-        var dd = r?.getString("answers");
-        tvCorrection.setText(Html.fromHtml(dd));
+        var args = arguments;
+        var correctAnswers = args?.getString("answers");
+        tvCorrection.setText(Html.fromHtml(correctAnswers));
     }
 }
